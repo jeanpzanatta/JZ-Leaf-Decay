@@ -1,4 +1,9 @@
 name: jz-leaf-decay
-version: '1.1'
+version: '1.2'
 main: com.jean.JZLeafDecay.LeafDecay
 api-version: '1.21.8'
+
+commands:
+  jzleaf:
+    description: Liga ou desliga o plugin de folhas
+    usage: /jzleaf <on|off>

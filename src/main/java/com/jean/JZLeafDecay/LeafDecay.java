@@ -6,6 +6,8 @@ import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Leaves;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -16,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class LeafDecay extends JavaPlugin implements Listener {
     private final Set<Block> scheduledBlocks = new HashSet<>();
+    private boolean enabled = true;
     private static final List<BlockFace> NEIGHBORS = Arrays
             .asList(BlockFace.UP,
                     BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST,
@@ -47,6 +50,7 @@ public final class LeafDecay extends JavaPlugin implements Listener {
 
     // Apenas coloca folhas vizinhas na fila para futura verificação.
     private void onBlockRemove(final Block oldBlock, long delay) {
+        if (!enabled) return;
         if (!Tag.LOGS.isTagged(oldBlock.getType())
                 && !Tag.LEAVES.isTagged(oldBlock.getType())) {
             return;
@@ -73,5 +77,27 @@ public final class LeafDecay extends JavaPlugin implements Listener {
         getServer().getPluginManager().callEvent(event);
         block.breakNaturally();
         return true;
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (command.getName().equalsIgnoreCase("jzleaf")) {
+            if (args.length == 0) {
+                sender.sendMessage("§eUse: /jzleaf <on|off>");
+                return true;
+            }
+
+            if (args[0].equalsIgnoreCase("on")) {
+                enabled = true;
+                sender.sendMessage("§a[JZLeafDecay] Plugin de decaimento de folhas rápido LIGADO! \uD83E\uDEBE");
+            } else if (args[0].equalsIgnoreCase("off")) {
+                enabled = false;
+                sender.sendMessage("§c[JZLeafDecay] Plugin de decaimento de folhas rápido DESLIGADO! \uD83C\uDF33");
+            } else {
+                sender.sendMessage("§eUse: /jzleaf <on|off>");
+            }
+            return true;
+        }
+        return false;
     }
 }
